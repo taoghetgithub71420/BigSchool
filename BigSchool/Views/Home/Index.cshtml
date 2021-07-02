@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Chào mừng bạn đến với khoá học siêu cấp VIP pro </h1>
+    <p class="lead"> Cách đi rừng hiệu qua? cắm mắt kiểm soát, phản gank chuẩn mực </p>
+    <a href="https://www.facebook.com/taoghetfb/"> FaceBook </a>
+    
+</div>
+
+
+    <div class="row">
+        <ul>
+            <li>
+                <img src="~/images/166901393_1384480815218248_3414617181070975519_n.png" width="70" height="100"/>
+               
+
+                <img src="~/images/but2ngontay.jpg" width="70" height="100"/>
+
+                <img src="~/images/167237174_1413469085659815_533833688571707643_n.jpg"width="70" height="100" />
+            </li>
+           
+            @foreach (var course in Model)
+            {
+
+                <li>
+                    @course.DataTime.ToString("dd/MM/yyyy HH:mm") - @course.Name  - @course.Category.Name     - @course.Place
+                </li>
+            }
+        </ul>
+
+        
+    </div>
