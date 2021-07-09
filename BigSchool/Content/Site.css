@@ -1,4 +1,21 @@
-﻿body {
+﻿/* css cho menu
+    .navbar-inverse {
+    background-color: #0094ff;
+    border-color: #ffd800;
+}
+
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: yellow;
+}
+
+.navbar-inverse .navbar-brand {
+    color: white;
+}
+*/
+
+body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -22,3 +39,39 @@ select,
 textarea {
     max-width: 280px;
 }
+/*course layout*/
+    .course{
+    list-style:none;
+}
+.course > li {
+    position:relative;
+    margin-bottom:30px;
+
+}
+.course > li .date{
+    text-align:center;
+    background-color:#ff0000;
+    color:aqua;
+    width:60px;
+    border-radius:8px;
+}
+.course > li .details {
+    position:absolute;
+    top:0;
+    left:70px;
+}
+.course > li .lecture {
+
+}
+    .course > li .category{
+
+    }
+    .course > li .action {
+        display: none;
+        left: 70px;
+        position:absolute;
+    }
+    .course > li:hover .action{
+        display:block;
+    }
+

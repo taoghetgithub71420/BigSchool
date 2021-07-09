@@ -1,0 +1,66 @@
+﻿@model IEnumerable<BigSchool.Models.Course>
+
+@{
+    ViewBag.Title = "Attending";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Attending</h2>
+<div class="row">
+    <ul class="course">
+
+        <li>
+            <img src="~/images/166901393_1384480815218248_3414617181070975519_n.png" width="70" height="100" />
+
+
+            <img src="~/images/but2ngontay.jpg" width="70" height="100" />
+
+            <img src="~/images/167237174_1413469085659815_533833688571707643_n.jpg" width="70" height="100" />
+        </li>
+
+        @foreach (var course in Model)
+        {
+            <li>
+                <div class="date">
+                    <div class="month">
+                       
+                        @course.DataTime.ToString("MM")
+                    </div>
+                    <div class="day">
+                        @course.DataTime.ToString("dd")
+                    </div>
+                </div>
+                <div class="details">
+                    <span class="lecture">
+                        @course.Name
+                    </span>
+                    <span class="category">
+                        @course.Category.Name
+                    </span>
+                    <span class="place">
+                        @course.Place
+                    </span>
+                </div>
+            </li>
+
+        }
+    </ul>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+
+        <table class="table">
+          
+          
+            @foreach (var item in Model)
+            {
+        <tr>
+            
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+            }
+
+        </table>

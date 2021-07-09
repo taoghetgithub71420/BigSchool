@@ -11,7 +11,8 @@
 
 
     <div class="row">
-        <ul>
+        <ul class="course">
+            
             <li>
                 <img src="~/images/166901393_1384480815218248_3414617181070975519_n.png" width="70" height="100"/>
                
@@ -23,12 +24,52 @@
            
             @foreach (var course in Model)
             {
-
                 <li>
-                    @course.DataTime.ToString("dd/MM/yyyy HH:mm") - @course.Name  - @course.Category.Name     - @course.Place
-                </li>
+                    <div class="date">
+                        <div class="month">
+                            @course.DataTime.ToString("MM")
+                        </div>
+                        <div class="day">
+                            @course.DataTime.ToString("dd")
+                        </div>
+                    </div>
+                    <div class="details">
+                        <span class="lecture">
+                            @course.Name
+                        </span>
+                        <span class="category">
+                            @course.Category.Name
+                        </span>
+                        <span class="place">
+                            @course.Place
+                        </span>
+                        <button data-course-id="@course.Id" class="btn btn-default btn-sm js-tongle-attendance"> Going?
+
+                        </button>
+                     
+                       
+                    </div>
+                </li>  
             }
         </ul>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".js-tongle-attendance").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/Attendences", { Id: button.attr("data-course-id") })
+                    .done(function () {
+                        alert("Dang ky khoa hoc thanh cong!!!!");
+                        button
+                            .removeClass("btn-default")
+                            .addClass("btn-info")
+                            .text("Going");
+                    }).fail(function () {
+                        alert("Oh my f*cking god da co loi gi do roi bro");
+                    });
+            });
 
-        
+        });
+    </script>    }
+
     </div>
