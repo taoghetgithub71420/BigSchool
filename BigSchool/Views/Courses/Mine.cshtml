@@ -69,9 +69,10 @@
                     @Html.DisplayFor(modelItem => item.Place)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    <div class="action">
+                        <a href="@Url.Action("Edit", "Courses", new { id = item.Id })">Edit</a>
+                        <a href="@Url.Action("Delete","Courses",new { id=  item.Id })">Delete</a>
+                    </div>
                 </td>
             </tr>
         }

@@ -3,7 +3,10 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,6 +15,7 @@ namespace BigSchool.Controllers
     public class CoursesController : Controller
     {
         // GET: Courses
+        BigSchoolContext context = new BigSchoolContext();
         public ActionResult Create()
         {
             //get list category
@@ -30,7 +34,6 @@ namespace BigSchool.Controllers
             BigSchoolContext context = new BigSchoolContext();
 
             //(Kiểm tra dữ liệu nhập phía Server, trước khi lưu vào co sở dữ liệu, nếu nhập sai yêu cầu lỗi sẽ được gửi lại trang đang thao tác)
-            // Không xét valid LectureId vì bằng user đăng nhập
             // Không xét valid LectureId vì bằng user đăng nhập
             ModelState.Remove("LecturerId");
             if (!ModelState.IsValid)
@@ -78,8 +81,49 @@ namespace BigSchool.Controllers
             return View(course);
          }
 
-        
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+
+            Course c = context.Courses.SingleOrDefault(p => p.Id == id);
+            c.ListCategory = context.Categories.ToList();
+            return View(c);
+        }
+        [Authorize]
+        [HttpPost]
+        public ActionResult Edit(Course c)
+        {
+
+            Course edit = context.Courses.SingleOrDefault(p => p.Id == c.Id);
+            if (edit != null)
+            {
+                context.Courses.AddOrUpdate(c);
+                context.SaveChanges();
+
+            }
+            return RedirectToAction("Mine");
+        }
+        [Authorize]
+        public ActionResult Delete(int id)
+        {
+
+            Course delete = context.Courses.SingleOrDefault(p => p.Id == id);
+            return View(delete);
+        }
+        [HttpPost]
+        public ActionResult DeleteCourse(int id)
+        {
+
+            Course delete = context.Courses.SingleOrDefault(p => p.Id == id);
+            if (delete != null)
+            {
+                context.Courses.Remove(delete);
+                context.SaveChanges();
+
+            }
+            return RedirectToAction("Mine");
+        }
 
 
-    }     
     }
+}
