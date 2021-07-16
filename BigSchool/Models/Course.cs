@@ -12,32 +12,36 @@ namespace BigSchool.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Course()
         {
-            Attendances = new HashSet<Attendance>();
+            Attendences = new HashSet<Attendence>();
         }
 
         public int Id { get; set; }
-       
+
         [Required]
         [StringLength(128)]
         public string LecturerId { get; set; }
-      
 
         [Required]
         [StringLength(255)]
         public string Place { get; set; }
 
-        public DateTime DataTime { get; set; }
+        public DateTime DateTime { get; set; }
 
         public int CategoryId { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Attendance> Attendances { get; set; }
+        public virtual ICollection<Attendence> Attendences { get; set; }
 
         public virtual Category Category { get; set; }
-        public List<Category> ListCategory = new List<Category>();
 
+
+        //
+        public List<Category> ListCategory = new List<Category>();
         public string Name;
         public string LectureName;
 
+        public bool isLogin = false;
+        public bool isShowGoing = false;
+        public bool isShowFollow = false;
     }
 }

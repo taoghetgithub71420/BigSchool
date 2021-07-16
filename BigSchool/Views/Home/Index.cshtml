@@ -8,8 +8,8 @@
     <a href="https://www.facebook.com/taoghetfb/"> FaceBook </a>
     
 </div>
-
-
+@using BigSchool.Models 
+@model IEnumerable<BigSchool.Models.Course>
     <div class="row">
         <ul class="course">
             
@@ -21,55 +21,118 @@
 
                 <img src="~/images/167237174_1413469085659815_533833688571707643_n.jpg"width="70" height="100" />
             </li>
-           
+   
             @foreach (var course in Model)
             {
-                <li>
-                    <div class="date">
-                        <div class="month">
-                            @course.DataTime.ToString("MM")
-                        </div>
-                        <div class="day">
-                            @course.DataTime.ToString("dd")
-                        </div>
-                    </div>
-                    <div class="details">
-                        <span class="lecture">
-                            @course.Name
-                        </span>
-                        <span class="category">
-                            @course.Category.Name
-                        </span>
-                        <span class="place">
-                            @course.Place
-                        </span>
-                        <button data-course-id="@course.Id" class="btn btn-default btn-sm js-tongle-attendance"> Going?
+        <li>
+            <div class="date">
+                <div class="month">
+                    @course.DateTime.ToString("MM")
+                </div>
+                <div class="day">
+                    @course.DateTime.ToString("dd")
+                </div>
+            </div>
+                @*/* theo doi btn */*@
+                <div class="details">
+                    <div class="category">
+                       @course.Category.Name
+                        @course.Place
+                        @if (course.isLogin)
+                        {
+                            if (course.isShowGoing)
+                            {
+                                <br /> <button data-course-id="@course.Id" class="btn btn-default btn-sm js-tongle-attendance">Going?</button>
 
-                        </button>
-                     
-                       
+                            }
+                            else
+                            {
+                                <button data-course-id="@course.Id" class="btn btn-info btn-sm js-tongle-attendance">Going</button>
+                            }
+                        }
                     </div>
-                </li>  
+                </div>
+                @*/* theo doi btn */*@
+             
+                    <div class="lecture">
+                        @course.Name 
+                        @if (course.isLogin)
+                        {
+                            if (course.isShowFollow)
+                            {
+                               <br /> <button data-user-id="@course.LecturerId" class="btn btn-default btn-sm js-tongle-follow">Follow</button>
+
+                            }
+                            else
+                            {
+                                      <br />  <button data-user-id="@course.LecturerId" class="btn btn-success btn-sm js-tongle-follow">Following</button>
+                            }
+                        }
+                    
+
+                </div>
+        </li>  
             }
         </ul>
-@section scripts {
+@section scripts 
+{
     <script>
-        $(document).ready(function () {
+        $(document).ready(function ()
+        {
             $(".js-tongle-attendance").click(function (e) {
                 var button = $(e.target);
-                $.post("/api/Attendences", { Id: button.attr("data-course-id") })
-                    .done(function () {
-                        alert("Dang ky khoa hoc thanh cong!!!!");
-                        button
-                            .removeClass("btn-default")
-                            .addClass("btn-info")
-                            .text("Going");
+                $.post("/api/Attendences/Attend", { Id: button.attr("data-course-id") })
+                    .done(function (result) {
+                        if (result == "cancel") {
+                            alert("Cancel register course sucessfully!")
+                            button
+                                .removeClass("btn-info")
+                                .addClass("btn-default")
+                                .text("Going?");
+                        } else {
+                            alert("Register course sucessfully!")
+                            button
+                                .removeClass("btn-default")
+                                .addClass("btn-info")
+                                .text("Going");
+                        }
+
                     }).fail(function () {
-                        alert("Oh my f*cking god da co loi gi do roi bro");
+                        alert("oh co loi loi bro");
                     });
             });
+            /* cript theo doi*/
+            $(".js-tongle-follow").click(function (e) {
+                var button = $(e.target);
+                var followee = button.attr("data-user-id");
+                $.post("/api/Attendences/Follow", { FolloweeId: button.attr("data-user-id") })
+                    .done(function (result) {
+                if (result == "cancel") {
+                    $('.js-tongle-follow').each(function (i, obj) {
+                        if ($(this).attr('data-user-id') == followee) {
+                            $(this).removeClass("btn-success")
+                                .addClass("btn-default")
+                                .text("Follow");
+                        }
+                    });
+                    alert("unFollow sucessfully")
+                } else {
+                    $('.js-tongle-follow').each(function (i, obj) {
+                        if ($(this).attr('data-user-id') == followee) {
+                            $(this).removeClass("btn-default")
+                                .addClass("btn-success")
+                                .text("Following");
+                        }
+                    });
+                    alert("Follow sucessfully")
+                }
 
-        });
-    </script>    }
-
+                    }).fail(function () {
+                        alert("co loi gi do roi bro");
+                    });
+            });
+        })
+    </script>    
+  }
     </div>
+  

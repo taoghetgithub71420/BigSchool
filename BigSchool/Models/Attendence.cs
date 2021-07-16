@@ -6,8 +6,7 @@ namespace BigSchool.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("Attendance")]
-    public partial class Attendance
+    public partial class Attendence
     {
         [Key]
         [Column(Order = 0)]

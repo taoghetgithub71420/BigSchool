@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -55,9 +56,9 @@ namespace BigSchool.Controllers
         {
             BigSchoolContext context = new BigSchoolContext();
             ApplicationUser currenUser = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
-            var listAttendance = context.Attendances.Where(p => p.Attendee == currenUser.Id).ToList();
+            var listAttendance = context.Attendences.Where(p => p.Attendee == currenUser.Id).ToList();
             var courses = new List<Course>();
-            foreach (Attendance temp in listAttendance)
+            foreach (Attendence temp in listAttendance)
             {
                 Course objCourse = temp.Course;
 
@@ -73,7 +74,7 @@ namespace BigSchool.Controllers
         {
             ApplicationUser currenUser = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
             BigSchoolContext context = new BigSchoolContext();
-            var course = context.Courses.Where(c => c.LecturerId == currenUser.Id && c.DataTime > DateTime.Now).ToList();
+            var course = context.Courses.Where(c => c.LecturerId == currenUser.Id && c.DateTime > DateTime.Now).ToList();
             foreach (Course i in course)
             {
                 i.LectureName = currenUser.Name; // name la cot da them vao aspnet user
@@ -94,8 +95,8 @@ namespace BigSchool.Controllers
         public ActionResult Edit(Course c)
         {
 
-            Course edit = context.Courses.SingleOrDefault(p => p.Id == c.Id);
-            if (edit != null)
+            Course e = context.Courses.SingleOrDefault(p => p.Id == c.Id);
+            if (e != null)
             {
                 context.Courses.AddOrUpdate(c);
                 context.SaveChanges();
@@ -114,16 +115,100 @@ namespace BigSchool.Controllers
         public ActionResult DeleteCourse(int id)
         {
 
-            Course delete = context.Courses.SingleOrDefault(p => p.Id == id);
-            if (delete != null)
+           
+            try
+
             {
-                context.Courses.Remove(delete);
-                context.SaveChanges();
+
+                Course delete = context.Courses.SingleOrDefault(p => p.Id == id);
+                if (delete != null)
+                {
+                    context.Courses.Remove(delete);
+                    context.SaveChanges();
+
+                }
+
+            }
+
+            catch (DbEntityValidationException ex)
+
+            {
+
+                // Retrieve the error messages as a list of strings.
+
+                var errorMessages = ex.EntityValidationErrors
+
+                .SelectMany(x => x.ValidationErrors)
+
+                .Select(x => x.ErrorMessage);
+
+                // Join the list to a single string.
+
+                var fullErrorMessage = string.Join("; ", errorMessages);
+
+                // Combine the original exception message with the new one.
+
+                var exceptionMessage = string.Concat(ex.Message, " The validation errors are: ", fullErrorMessage);
+
+                // Throw a new DbEntityValidationException with the improved exception message.
+
+                throw new DbEntityValidationException(exceptionMessage, ex.EntityValidationErrors);
 
             }
             return RedirectToAction("Mine");
         }
+        //[HttpPost]
+        //public JsonResult RegisterCourse(int id)
+        //{
+        //    var userId = User.Identity.GetUserId();
+        //    var attending = context.Attendences.Where(m => m.CourseId == id && m.Attendee == userId).FirstOrDefault();
+        //    if(attending != null)
+        //    {
+        //        // có dữ liệu thì nó đăng ký rồi => xóa 
+        //        context.Attendences.Remove(attending);
+        //        context.SaveChanges();
+        //        return Json("true", JsonRequestBehavior.AllowGet);
+        //    }
+        //    else
+        //    {
+        //        // ngược lại chưa có thì thêm .
+        //        Attendence item = new Attendence();
+        //        item.Attendee = userId;
+        //        item.CourseId = id;
+        //        context.Attendences.Add(item);
+        //        context.SaveChanges();
+        //        return Json("false", JsonRequestBehavior.AllowGet);
+        //    }   
+        //}
+        public ActionResult LectureIamGoing()
+        {
+            ApplicationUser currentUser =
+           System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>()
+            .FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+            BigSchoolContext context = new BigSchoolContext();
+            //danh sách giảng viên được theo dõi bởi người dùng (đăng nhập) hiện tại
+            var listFollwee = context.Followings.Where(p => p.FollowerId ==
+            currentUser.Id).ToList();
+            //danh sách các khóa học mà người dùng đã đăng ký
+            var listAttendances = context.Attendences.Where(p => p.Attendee ==
+            currentUser.Id).ToList();
+            var courses = new List<Course>();
+            foreach (var course in listAttendances)
+            {
+                foreach (var item in listFollwee)
+                {
+                    if (item.FolloweeId == course.Course.LecturerId)
+                    {
+                        Course objCourse = course.Course;
+                        objCourse.LectureName =
+                       System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>()
+                        .FindById(objCourse.LecturerId).Name;
+                        courses.Add(objCourse);
+                    }
+                }
 
-
+            }
+            return View(courses);
+        }
     }
 }
